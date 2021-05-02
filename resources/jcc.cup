@@ -1,0 +1,106 @@
+package mx.jcc.syntax;
+
+import mx.jcc.syntax.DeclarationNode;
+import mx.jcc.syntax.Variable;
+import mx.jcc.syntax.VariableType;
+import java_cup.runtime.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+   
+action code {:
+    public Map<String, VariableType> symbolTable  = new HashMap<>();
+    public Map<String, List<Variable>> valueTable  = new HashMap<>();
+:}
+
+parser code {:
+    public void insertVariable(String name, VariableType type) {
+        if (symbolTable.containsKey(name)) {
+            System.err.printf("The variable %s already declared\n", name);
+            return;
+        }
+        symbolTable.put(name, type);
+        System.out.printf("Var %s: %s\n", name, type);
+    }
+
+    public void insertValue(String name, Variable variable) {
+        if (!symbolTable.containsKey(name)) {
+            System.err.printf("The nonterminal %s is not declared\n", name);
+            return;
+        }
+        if (!valueTable.containsKey(name)) {
+            List<Variable> list = new LinkedList<>();
+            valueTable.put(name, list);
+        }
+        List<Variable> list = valueTable.get(name);
+        list.add(variable);
+        System.out.printf("Insert %s: %s\n", name, variable.value);
+    }
+:};
+
+terminal String NONTERM;
+terminal String TERMINAL;
+terminal String COMMA;
+terminal String EOL;
+
+non terminal DeclarationNode DT, DNT, A, CP;
+non terminal Object initial, DECLS, DST, DSNT, ATT, DTT, DNTT, PRODS;
+
+    initial ::=   DECLS PRODS;
+
+    DECLS ::=   DST DSNT;
+
+    DST ::= DST DTT | DTT;
+    DTT ::= DT EOL;
+    DT ::=  DT:e1 COMMA TERMINAL:vid
+            {:
+                insertVariable(vid, e1.a);
+                RESULT = new DeclarationNode(e1.a, null);
+            :} |
+            TERMINAL:t TERMINAL:vid
+            {: 
+                insertVariable(vid, VariableType.TERMINAL);
+                RESULT = new DeclarationNode(VariableType.TERMINAL, null);
+            :};
+
+    DSNT ::= DSNT DNTT | DNTT;
+    DNTT ::= DNT EOL;
+    DNT ::=  DNT:e1 COMMA NONTERM:vid
+            {:
+                insertVariable(vid, e1.a);
+                RESULT = new DeclarationNode(e1.a, null);
+            :} |
+            NONTERM:nt NONTERM:vid
+            {: 
+                insertVariable(vid, VariableType.NON_TERMINAL);
+                RESULT = new DeclarationNode(VariableType.NON_TERMINAL, null);
+            :};
+
+    PRODS ::=   PRODS ATT| ATT;
+    ATT ::=  A EOL | 
+            CP:cp EOL
+            {:
+                insertValue(cp.a, Variable.EPSION);
+                RESULT = cp;
+            :};
+    A ::=   A:a NONTERM:vid
+            {:
+                insertValue(a.a, Variable.nonTerminal(vid));
+                RESULT = a;
+            :} |
+            A:a TERMINAL:vid
+            {:
+                insertValue(a.a, Variable.terminal(vid));
+                RESULT = a;
+            :} |
+            CP:cp NONTERM:vid
+            {:
+                insertValue(cp.a, Variable.nonTerminal(vid));
+                RESULT = cp;
+            :} |
+            CP:cp TERMINAL:vid
+            {:
+                insertValue(cp.a, Variable.terminal(vid));
+                RESULT = cp;
+            :};
