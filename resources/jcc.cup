@@ -12,7 +12,7 @@ import java.util.Map;
    
 action code {:
     public Map<String, VariableType> symbolTable  = new HashMap<>();
-    public Map<String, List<Variable>> valueTable  = new HashMap<>();
+    public Map<String, List<List<Variable>>> valueTable  = new HashMap<>();
 
     public void insertVariable(String name, VariableType type) {
         if (symbolTable.containsKey(name)) {
@@ -20,7 +20,25 @@ action code {:
             return;
         }
         symbolTable.put(name, type);
+        if (type == VariableType.NON_TERMINAL) {
+            List<List<Variable>> list = new LinkedList<>();
+            list.add(new LinkedList<>());
+            valueTable.put(name, list);
+        }
         System.out.printf("Var %s: %s\n", name, type);
+    }
+
+    public void nextRule(String name) {
+        if (!symbolTable.containsKey(name)) {
+            System.err.printf("The nonterminal %s is not declared\n", name);
+            return;
+        }
+        if (symbolTable.get(name) != VariableType.NON_TERMINAL) {
+            System.err.printf("%s is non terminal\n", name);
+            return;
+        }
+        List<List<Variable>> rules = valueTable.get(name);
+        rules.add(new LinkedList<>());
     }
 
     public void insertValue(String name, Variable variable) {
@@ -28,17 +46,49 @@ action code {:
             System.err.printf("The nonterminal %s is not declared\n", name);
             return;
         }
-        if (!valueTable.containsKey(name)) {
-            List<Variable> list = new LinkedList<>();
-            valueTable.put(name, list);
+        if (symbolTable.get(name) != VariableType.NON_TERMINAL) {
+            System.err.printf("%s is non terminal\n", name);
+            return;
         }
-        List<Variable> list = valueTable.get(name);
-        list.add(variable);
+        List<List<Variable>> rules = valueTable.get(name);
+        if (rules.size() == 0) {
+            rules.add(new LinkedList<>());
+        }
+        List<Variable> rule = rules.get(rules.size() - 1);
+        rule.add(variable);
+        System.out.printf("Insert %s: %s\n", name, variable.value);
+    }
+
+    public void insertValue(String name, String vid) {
+        if (!symbolTable.containsKey(name)) {
+            System.err.printf("The nonterminal %s is not declared\n", name);
+            return;
+        }
+        if (symbolTable.get(name) != VariableType.NON_TERMINAL) {
+            System.err.printf("%s is non terminal\n", name);
+            throw new Error(String.format("%s is non terminal\n", name));
+        }
+        if (!symbolTable.containsKey(vid)) {
+            System.err.printf("The %s is not declared\n", name);
+            return;
+        }
+        VariableType type = symbolTable.get(vid);
+        Variable variable = new Variable(vid, type);
+        List<List<Variable>> rules = valueTable.get(name);
+        if (rules.size() == 0) {
+            rules.add(new LinkedList<>());
+        }
+        List<Variable> rule = rules.get(rules.size() - 1);
+        rule.add(variable);
         System.out.printf("Insert %s: %s\n", name, variable.value);
     }
 :}
 
 parser code {:
+    public CUP$parser$actions getActions() {
+        return this.action_obj;
+    }
+
     public void report_error(String message, Object info) {
         StringBuilder m = new StringBuilder("Error");
          if (info instanceof java_cup.runtime.Symbol) {
@@ -58,8 +108,7 @@ parser code {:
     }
 :};
 
-terminal String NONTERM;
-terminal String TERMINAL;
+terminal String VAR;
 terminal String KEYWORD_NONTERM;
 terminal String KEYWORD_TERMINAL;
 terminal String COMMA;
@@ -76,12 +125,12 @@ non terminal Object initial, DECLS, DST, DSNT, ATT, DTT, DNTT, PRODS;
 
     DST ::= DST DTT | DTT;
     DTT ::= DT EOL;
-    DT ::=  DT:e1 COMMA TERMINAL:vid
+    DT ::=  DT:e1 COMMA VAR:vid
             {:
                 insertVariable(vid, e1.a);
                 RESULT = new DeclarationNode(e1.a, null);
             :} |
-            KEYWORD_TERMINAL:t TERMINAL:vid
+            KEYWORD_TERMINAL:t VAR:vid
             {: 
                 insertVariable(vid, VariableType.TERMINAL);
                 RESULT = new DeclarationNode(VariableType.TERMINAL, null);
@@ -89,46 +138,41 @@ non terminal Object initial, DECLS, DST, DSNT, ATT, DTT, DNTT, PRODS;
 
     DSNT ::= DSNT DNTT | DNTT;
     DNTT ::= DNT EOL;
-    DNT ::=  DNT:e1 COMMA NONTERM:vid
+    DNT ::=  DNT:e1 COMMA VAR:vid
             {:
                 insertVariable(vid, e1.a);
                 RESULT = new DeclarationNode(e1.a, null);
             :} |
-            KEYWORD_NONTERM:nt NONTERM:vid
+            KEYWORD_NONTERM:nt VAR:vid
             {: 
                 insertVariable(vid, VariableType.NON_TERMINAL);
                 RESULT = new DeclarationNode(VariableType.NON_TERMINAL, null);
             :};
 
     PRODS ::=   PRODS ATT| ATT;
-    ATT ::=  A EOL | 
+    ATT ::=  A:a EOL 
+            {:
+                nextRule(a.a);
+                RESULT = a;
+            :} | 
             CP:cp EOL
             {:
                 insertValue(cp.a, Variable.EPSION);
+                nextRule(cp.a);
                 RESULT = cp;
             :};
-    A ::=   A:a NONTERM:vid
+    A ::=   A:a VAR:vid
             {:
-                insertValue(a.a, Variable.nonTerminal(vid));
+                insertValue(a.a, vid);
                 RESULT = a;
             :} |
-            A:a TERMINAL:vid
+            CP:cp VAR:vid
             {:
-                insertValue(a.a, Variable.terminal(vid));
-                RESULT = a;
-            :} |
-            CP:cp NONTERM:vid
-            {:
-                insertValue(cp.a, Variable.nonTerminal(vid));
-                RESULT = cp;
-            :} |
-            CP:cp TERMINAL:vid
-            {:
-                insertValue(cp.a, Variable.terminal(vid));
+                insertValue(cp.a, vid);
                 RESULT = cp;
             :};
 
-    CP ::=  NONTERM:vid FLECHA
+    CP ::=  VAR:vid FLECHA
             {:
                 RESULT = new AssigmentNode(vid, null);
             :};

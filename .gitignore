@@ -2,3 +2,6 @@
 .idea
 *.iml
 out/
+
+# Resources
+resources/input.txt
