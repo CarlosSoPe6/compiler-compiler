@@ -12,7 +12,8 @@ import java.util.Map;
    
 action code {:
     public Map<String, VariableType> symbolTable  = new HashMap<>();
-    public Map<String, List<List<Variable>>> valueTable  = new HashMap<>();
+    public Map<Variable, List<List<Variable>>> valueTable  = new HashMap<>();
+    public Variable initial = null;
 
     public void insertVariable(String name, VariableType type) {
         if (symbolTable.containsKey(name)) {
@@ -23,7 +24,7 @@ action code {:
         if (type == VariableType.NON_TERMINAL) {
             List<List<Variable>> list = new LinkedList<>();
             list.add(new LinkedList<>());
-            valueTable.put(name, list);
+            valueTable.put(new Variable(name, VariableType.NON_TERMINAL), list);
         }
         System.out.printf("Var %s: %s\n", name, type);
     }
@@ -37,7 +38,7 @@ action code {:
             System.err.printf("%s is non terminal\n", name);
             return;
         }
-        List<List<Variable>> rules = valueTable.get(name);
+        List<List<Variable>> rules = valueTable.get(new Variable(name, VariableType.NON_TERMINAL));
         rules.add(new LinkedList<>());
     }
 
@@ -50,7 +51,11 @@ action code {:
             System.err.printf("%s is non terminal\n", name);
             return;
         }
-        List<List<Variable>> rules = valueTable.get(name);
+        Variable idx = new Variable(name, VariableType.NON_TERMINAL);
+        if (initial == null) {
+            initial = idx;
+        }
+        List<List<Variable>> rules = valueTable.get(idx);
         if (rules.size() == 0) {
             rules.add(new LinkedList<>());
         }
@@ -60,27 +65,13 @@ action code {:
     }
 
     public void insertValue(String name, String vid) {
-        if (!symbolTable.containsKey(name)) {
-            System.err.printf("The nonterminal %s is not declared\n", name);
-            return;
-        }
-        if (symbolTable.get(name) != VariableType.NON_TERMINAL) {
-            System.err.printf("%s is non terminal\n", name);
-            throw new Error(String.format("%s is non terminal\n", name));
-        }
         if (!symbolTable.containsKey(vid)) {
             System.err.printf("The %s is not declared\n", name);
             return;
         }
         VariableType type = symbolTable.get(vid);
         Variable variable = new Variable(vid, type);
-        List<List<Variable>> rules = valueTable.get(name);
-        if (rules.size() == 0) {
-            rules.add(new LinkedList<>());
-        }
-        List<Variable> rule = rules.get(rules.size() - 1);
-        rule.add(variable);
-        System.out.printf("Insert %s: %s\n", name, variable.value);
+        insertValue(name, variable);
     }
 :}
 
