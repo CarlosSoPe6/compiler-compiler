@@ -53,9 +53,8 @@ public class FollowSet {
                 for (int i = 0; i < rule.size(); i++) {
                     Variable variable = rule.get(i);
                     if (variable.equals(search)) {
+                        // CASO 3
                         if (i + 1 == rule.size()) {
-                            // If last element
-                            // CASO 3
                             returnSet.addAll(
                                     searchFollow(
                                             valueTable,
@@ -69,27 +68,24 @@ public class FollowSet {
                         } else {
                             Variable follow = rule.get(i + 1);
                             Set<Variable> firstfollow = firstSet.get(follow);
-                            switch (follow.type) {
-                                case TERMINAL:
-                                    // CASO 2
-                                    returnSet.add(follow);
-                                    break;
-                                case NON_TERMINAL:
-                                    if (firstfollow.contains(Variable.EPSION)) {
-                                        // CASO 3
-                                        returnSet.addAll(
-                                                searchFollow(
-                                                        valueTable,
-                                                        firstSet,
-                                                        followSet,
-                                                        visited,
-                                                        rules.getKey(),
-                                                        initial
-                                                )
-                                        );
-                                    }
-                                    // CASO 2
-                                    returnSet.addAll(firstfollow);
+                            // CASO 2
+                            if (follow.isTerminal()) {
+                                returnSet.add(follow);
+                            } else {
+                                returnSet.addAll(firstfollow);
+                            }
+                            // CASO 3
+                            if (firstfollow.contains(Variable.EPSION)) {
+                                returnSet.addAll(
+                                        searchFollow(
+                                                valueTable,
+                                                firstSet,
+                                                followSet,
+                                                visited,
+                                                rules.getKey(),
+                                                initial
+                                        )
+                                );
                             }
                         }
                     }

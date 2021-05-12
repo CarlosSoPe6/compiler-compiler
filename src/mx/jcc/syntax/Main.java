@@ -24,6 +24,7 @@ public class Main {
             FollowSet followSetCalulator = new FollowSet();
             Map<Variable, Set<Variable>> firstSet = firstSetCalulator.computeSet(map, null);
             Map<Variable, Set<Variable>> followSet = followSetCalulator.computeSet(map, firstSet, p.getActions().initial);
+            System.out.println("FIRST");
             for (Map.Entry<Variable, Set<Variable>> entry : firstSet.entrySet()) {
                 System.out.printf("%s, %s\n", entry.getKey().value, Arrays.toString(entry.getValue().toArray()));
             }
