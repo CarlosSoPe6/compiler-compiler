@@ -73,19 +73,19 @@ public class FollowSet {
                                 returnSet.add(follow);
                             } else {
                                 returnSet.addAll(firstfollow);
-                            }
-                            // CASO 3
-                            if (firstfollow.contains(Variable.EPSION)) {
-                                returnSet.addAll(
-                                        searchFollow(
-                                                valueTable,
-                                                firstSet,
-                                                followSet,
-                                                visited,
-                                                rules.getKey(),
-                                                initial
-                                        )
-                                );
+                                // CASO 3
+                                if (firstfollow.contains(Variable.EPSION)) {
+                                    returnSet.addAll(
+                                            searchFollow(
+                                                    valueTable,
+                                                    firstSet,
+                                                    followSet,
+                                                    visited,
+                                                    rules.getKey(),
+                                                    initial
+                                            )
+                                    );
+                                }
                             }
                         }
                     }
