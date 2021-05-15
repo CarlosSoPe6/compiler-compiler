@@ -1,4 +1,4 @@
-package mx.jcc.analyzer.sets;
+package mx.jcc.analyzer;
 
 import mx.jcc.analyzer.ProductionRule;
 import mx.jcc.analyzer.interfaces.IKernelCalculator;

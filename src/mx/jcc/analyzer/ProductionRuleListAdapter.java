@@ -1,4 +1,4 @@
-package mx.jcc;
+package mx.jcc.analyzer;
 
 import mx.jcc.analyzer.ProductionRule;
 import mx.jcc.syntax.Variable;
