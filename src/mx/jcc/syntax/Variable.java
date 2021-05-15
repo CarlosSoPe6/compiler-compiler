@@ -6,8 +6,9 @@ public class Variable {
     public String value;
     public VariableType type;
 
-    public static final Variable EPSION = new Variable(null, VariableType.EPSILON);
+    public static final Variable EPSILON = new Variable(null, VariableType.EPSILON);
     public static final Variable EOF = new Variable(null, VariableType.EOF);
+    public static final Variable TRACK_POINT = new Variable(null, VariableType.TRACK_POINT);
 
     public Variable(String value, VariableType type){
         this.type = type;
@@ -29,6 +30,8 @@ public class Variable {
     public boolean isEOF() {
         return this.type == VariableType.EOF;
     }
+
+    public boolean isTrackPoint() {return  this.type == VariableType.TRACK_POINT; }
 
     @Override
     public String toString() {

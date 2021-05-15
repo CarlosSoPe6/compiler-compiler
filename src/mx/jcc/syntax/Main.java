@@ -20,6 +20,8 @@ public class Main {
                 System.out.println(entry.getKey() + ":" + Arrays.toString(entry.getValue().toArray()));
             }
 
+
+
             FirstSet firstSetCalulator = new FirstSet();
             FollowSet followSetCalulator = new FollowSet();
             Map<Variable, Set<Variable>> firstSet = firstSetCalulator.computeSet(map, null);

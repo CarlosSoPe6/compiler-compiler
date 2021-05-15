@@ -6,11 +6,6 @@
 
 package mx.jcc.syntax;
 
-import mx.jcc.syntax.AssigmentNode;
-import mx.jcc.syntax.DeclarationNode;
-import mx.jcc.syntax.Variable;
-import mx.jcc.syntax.VariableType;
-import java_cup.runtime.*;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -296,7 +291,7 @@ class CUP$parser$actions {
 		int cpright = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-1)).right;
 		AssigmentNode cp = (AssigmentNode)((java_cup.runtime.Symbol) CUP$parser$stack.elementAt(CUP$parser$top-1)).value;
 		
-                insertValue(cp.a, Variable.EPSION);
+                insertValue(cp.a, Variable.EPSILON);
                 nextRule(cp.a);
                 RESULT = cp;
             

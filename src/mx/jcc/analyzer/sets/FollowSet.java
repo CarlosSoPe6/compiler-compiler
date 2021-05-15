@@ -74,7 +74,7 @@ public class FollowSet {
                             } else {
                                 returnSet.addAll(firstfollow);
                                 // CASO 3
-                                if (firstfollow.contains(Variable.EPSION)) {
+                                if (firstfollow.contains(Variable.EPSILON)) {
                                     returnSet.addAll(
                                             searchFollow(
                                                     valueTable,

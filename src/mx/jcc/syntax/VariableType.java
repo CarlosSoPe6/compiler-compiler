@@ -5,4 +5,5 @@ public enum VariableType {
     NON_TERMINAL,
     EPSILON,
     EOF,
+    TRACK_POINT,
 }

@@ -43,24 +43,24 @@ public class FirstSet {
                 Variable variable = rule.get(i);
                 switch (variable.type) {
                     case EPSILON:
-                        returnSet.add(Variable.EPSION);
+                        returnSet.add(Variable.EPSILON);
                         i = rule.size();
                         break;
                     case NON_TERMINAL:
-                        returnSet.remove(Variable.EPSION);
+                        returnSet.remove(Variable.EPSILON);
                         Set<Variable> depthSet = dfsFistSet(
                                 valueTable,
                                 firstSet,
                                 visited,
                                 variable
                         );
-                        if (!depthSet.contains(Variable.EPSION)) {
+                        if (!depthSet.contains(Variable.EPSILON)) {
                             i = rule.size();
                         }
                         returnSet.addAll(depthSet);
                         break;
                     case TERMINAL:
-                        returnSet.remove(Variable.EPSION);
+                        returnSet.remove(Variable.EPSILON);
                         returnSet.add(variable);
                         i = rule.size();
                         break;
