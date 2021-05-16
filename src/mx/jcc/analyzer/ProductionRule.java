@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Objects;
 
 public class ProductionRule {
-    Variable head;
-    List<Variable> body;
+    public Variable head;
+    public List<Variable> body;
 
     public ProductionRule(Variable head, List<Variable> body) {
         this.body = body;
@@ -21,6 +21,18 @@ public class ProductionRule {
         if (o == null || getClass() != o.getClass()) return false;
         ProductionRule that = (ProductionRule) o;
         return head.equals(that.head) && body.equals(that.body);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(this.head.value);
+        builder.append("->");
+        for (Variable prod :
+                this.body) {
+            builder.append(prod.value);
+        }
+        return builder.toString();
     }
 
     @Override
