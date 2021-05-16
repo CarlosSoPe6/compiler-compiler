@@ -34,4 +34,14 @@ public class KernelCalculator implements IKernelCalculator {
     public void setKernel(ProductionRule rule, int index) {
         this.values.put(rule, index);
     }
+
+    @Override
+    public int agregateKernel(ProductionRule insert, ProductionRule search) {
+        if (this.values.containsKey(search)) {
+            int id = this.values.get(search);
+            this.values.put(insert, id);
+            return id;
+        }
+        return compute(insert);
+    }
 }
