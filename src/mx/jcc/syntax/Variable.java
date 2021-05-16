@@ -9,6 +9,7 @@ public class Variable {
     public static final Variable EPSILON = new Variable(null, VariableType.EPSILON);
     public static final Variable EOF = new Variable(null, VariableType.EOF);
     public static final Variable TRACK_POINT = new Variable(null, VariableType.TRACK_POINT);
+    public static final Variable INITIAL = new Variable("_", VariableType.NON_TERMINAL);
 
     public Variable(String value, VariableType type){
         this.type = type;
@@ -43,8 +44,7 @@ public class Variable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Variable variable = (Variable) o;
-        if (value == null && variable.value == null) return true;
-        return Objects.equals(value, variable.value) && type == variable.type;
+        return value.equals(variable.value) && type == variable.type;
     }
 
     @Override
