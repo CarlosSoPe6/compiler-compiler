@@ -8,7 +8,19 @@ import java.util.Map;
 
 public class KernelCalculator implements IKernelCalculator {
     @Override
-    public int compute(ProductionRule rule, Map<Variable, Integer> values) {
-        return 0;
+    public int compute(ProductionRule rule, Map<ProductionRule, Integer> values) {
+        if (values.containsKey(rule)) {
+            return values.get(rule);
+        }
+        int max = 0;
+        if (!values.values().isEmpty()) {
+            max = values.values().stream().max(Integer::compare).get();
+        }
+        setKernel(rule, values, max + 1);
+        return max;
+    }
+
+    @Override
+    public void setKernel(ProductionRule rule, Map<ProductionRule, Integer> values, int index) {
     }
 }
