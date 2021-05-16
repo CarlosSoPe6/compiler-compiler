@@ -1,9 +1,10 @@
-package mx.jcc.analyzer;
+package mx.jcc.analyzer.calculators;
 
 import mx.jcc.analyzer.ProductionRule;
 import mx.jcc.analyzer.interfaces.IKernelCalculator;
 import mx.jcc.syntax.Variable;
 
+import java.util.Collections;
 import java.util.Map;
 
 public class KernelCalculator implements IKernelCalculator {
@@ -12,15 +13,18 @@ public class KernelCalculator implements IKernelCalculator {
         if (values.containsKey(rule)) {
             return values.get(rule);
         }
-        int max = 0;
+        int max = -1;
         if (!values.values().isEmpty()) {
-            max = values.values().stream().max(Integer::compare).get();
+            max = Collections.max(values.values());
+            System.out.println("MAX: " + max);
         }
-        setKernel(rule, values, max + 1);
+        max = max + 1;
+        setKernel(rule, values, max);
         return max;
     }
 
     @Override
     public void setKernel(ProductionRule rule, Map<ProductionRule, Integer> values, int index) {
+        values.put(rule, index);
     }
 }

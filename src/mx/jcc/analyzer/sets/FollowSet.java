@@ -47,7 +47,6 @@ public class FollowSet {
         }
         System.out.println();
         for (Map.Entry<Variable, List<List<Variable>>> rules : valueTable.entrySet()) {
-            System.out.printf("Search: %s, At: %s\n",search, rules.getKey());
             for (List<Variable> rule : rules.getValue()
                  ) {
                 for (int i = 0; i < rule.size(); i++) {
