@@ -1,9 +1,6 @@
 package mx.jcc.syntax;
 
-import mx.jcc.analyzer.Action;
-import mx.jcc.analyzer.ActionType;
-import mx.jcc.analyzer.ProductionRule;
-import mx.jcc.analyzer.TableBuilder;
+import mx.jcc.analyzer.*;
 import mx.jcc.analyzer.adapters.ProductionRuleListAdapter;
 import mx.jcc.analyzer.adapters.SymbolTableListAdapter;
 import mx.jcc.analyzer.interfaces.IProductionRuleListAdapter;
@@ -36,6 +33,10 @@ public class Main {
             ISymbolTableListAdapter symbolAdapter = new SymbolTableListAdapter();
             List<Variable> terminals0 = symbolAdapter.transform(symbols, VariableType.TERMINAL);
             List<Variable> nonTerminals0 = symbolAdapter.transform(symbols, VariableType.NON_TERMINAL);
+
+            AutomatonBuilder automatonBuilder = new AutomatonBuilder();
+            Map<Variable, List<ProductionRule>> grammar = automatonBuilder.getMock();
+            automatonBuilder.build(grammar, followSet);
 
             List<Variable> terminals = new ArrayList<>();
             terminals.add(new Variable("pa", VariableType.TERMINAL));

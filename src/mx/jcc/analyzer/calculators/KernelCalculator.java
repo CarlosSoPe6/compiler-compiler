@@ -4,9 +4,7 @@ import mx.jcc.analyzer.ProductionRule;
 import mx.jcc.analyzer.interfaces.IKernelCalculator;
 import mx.jcc.syntax.Variable;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class KernelCalculator implements IKernelCalculator {
     public final Map<ProductionRule, Integer> values;
@@ -44,4 +42,17 @@ public class KernelCalculator implements IKernelCalculator {
         }
         return compute(insert);
     }
+
+    public List<ProductionRule> getKernelById(int id) {
+        List<ProductionRule> kernel = new LinkedList<>();
+
+        for (Map.Entry<ProductionRule, Integer> entry : this.values.entrySet()) {
+            if (entry.getValue() == id) {
+                kernel.add(entry.getKey());
+            }
+        }
+
+        return kernel;
+    }
+
 }

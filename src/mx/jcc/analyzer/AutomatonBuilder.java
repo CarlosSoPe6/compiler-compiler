@@ -19,10 +19,12 @@ public class AutomatonBuilder implements IAutomatonBuilder {
         KernelCalculator kernelCalculator = new KernelCalculator();
         ClousureCalculator clousureCalculator = new ClousureCalculator();
         ProductionRule firstRule = grammar.get(Variable.INITIAL).get(0);
+        Queue<Integer> states = new LinkedList<>();
 
 
 
         // First case: Given the initial rule, generate the initial kernel, closure and state
+        states.offer(0);
         kernelCalculator.setKernel(firstRule, 0);
         Set<ProductionRule> kernel = new HashSet<>();
         kernel.add(firstRule);
