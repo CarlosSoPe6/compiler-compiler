@@ -11,6 +11,9 @@ public class Action {
 
     @Override
     public String toString() {
-        return "Action{" + type + "\\" + value + "}";
+        return "Action {" +
+                "type=" + type +
+                "  state='" + value + '\'' +
+                "} ";
     }
 }
