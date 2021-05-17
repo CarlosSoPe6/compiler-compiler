@@ -1,0 +1,3 @@
+ ,$, id, mas, pa, pc, por, E, F, T
+0, , Action {type=SHIFT  state='5'} , , Action {type=REDUCE  state='4'} , , , Action {type=GOTO  state='1'} , Action {type=GOTO  state='3'} , Action {type=GOTO  state='2'} 
+1,Action {type=OK  state=''}  , , Action {type=SHIFT  state='6'} , , , , , Action {type=GOTO  state='8'} 
