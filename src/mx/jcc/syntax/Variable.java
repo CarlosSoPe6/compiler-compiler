@@ -2,7 +2,7 @@ package mx.jcc.syntax;
 
 import java.util.Objects;
 
-public class Variable {
+public class Variable implements Comparable {
     public String value;
     public VariableType type;
 
@@ -50,5 +50,10 @@ public class Variable {
     @Override
     public int hashCode() {
         return Objects.hash(value, type);
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return this.value.compareTo(((Variable) o).value);
     }
 }
