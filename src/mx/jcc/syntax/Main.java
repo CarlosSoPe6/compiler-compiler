@@ -50,17 +50,25 @@ public class Main {
             nonTerminals.add(new Variable("F", VariableType.NON_TERMINAL));
             Map<Variable, Action> tm = new TreeMap();
             tm.put(new Variable("id", VariableType.TERMINAL), new Action(ActionType.SHIFT, "5"));
-            tm.put(new Variable("pa", VariableType.TERMINAL), new Action(ActionType.REDUCE, "4"));
-            tm.put(new Variable("E", VariableType.NON_TERMINAL), new Action(ActionType.GOTO, "1"));
             tm.put(new Variable("T", VariableType.NON_TERMINAL), new Action(ActionType.GOTO, "2"));
             tm.put(new Variable("F", VariableType.NON_TERMINAL), new Action(ActionType.GOTO, "3"));
+            tm.put(new Variable("pa", VariableType.TERMINAL), new Action(ActionType.REDUCE, "4"));
+            tm.put(new Variable("E", VariableType.NON_TERMINAL), new Action(ActionType.GOTO, "1"));
             Map<Variable, Action> tm1 = new TreeMap();
+            tm1.put(new Variable("F", VariableType.NON_TERMINAL), new Action(ActionType.GOTO, "8"));
             tm1.put(new Variable("mas", VariableType.TERMINAL), new Action(ActionType.SHIFT, "6"));
             tm1.put(new Variable("$", VariableType.EOF), new Action(ActionType.OK, ""));
-            tm1.put(new Variable("F", VariableType.NON_TERMINAL), new Action(ActionType.GOTO, "8"));
+            Map<Variable, Action> tm2 = new TreeMap();
+            tm2.put(new Variable("F", VariableType.NON_TERMINAL), new Action(ActionType.SHIFT, "6"));
+            tm2.put(new Variable("pc", VariableType.TERMINAL), new Action(ActionType.REDUCE, "7"));
+            tm2.put(new Variable("mas", VariableType.TERMINAL), new Action(ActionType.REDUCE, "4"));
+            tm2.put(new Variable("id", VariableType.TERMINAL), new Action(ActionType.REDUCE, "5"));
+            tm2.put(new Variable("por", VariableType.TERMINAL), new Action(ActionType.REDUCE, "5"));
+            tm2.put(new Variable("pa", VariableType.TERMINAL), new Action(ActionType.SHIFT, "5"));
             List<Map<Variable, Action>> automa = new ArrayList<>();
             automa.add(tm);
             automa.add(tm1);
+            automa.add(tm2);
             new TableBuilder().write(automa, terminals, nonTerminals);
 
         } catch (Exception e) {

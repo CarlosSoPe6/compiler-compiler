@@ -14,6 +14,7 @@ public class ClousureCalculator implements IClousreCalculator {
     public Set<ProductionRule> compute(Set<ProductionRule> kernerId, Map<Variable, List<ProductionRule>> values) {
         Set<ProductionRule> closure = new HashSet<>(kernerId);
         boolean added;
+        boolean addedIteration;
         do {
             added = false;
             for (int i = 0; i < closure.toArray().length; i++) {
@@ -28,9 +29,10 @@ public class ClousureCalculator implements IClousreCalculator {
                 }
 
                 List<ProductionRule> productionRules = values.get(next);
-                added = closure.addAll(productionRules);
-                if (added) {
+                addedIteration = closure.addAll(productionRules);
+                if (addedIteration) {
                     i = 0;
+                    added = true;
                 }
             }
         } while (added);
