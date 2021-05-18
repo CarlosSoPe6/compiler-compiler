@@ -43,8 +43,8 @@ public class KernelCalculator implements IKernelCalculator {
         return compute(insert);
     }
 
-    public List<ProductionRule> getKernelById(int id) {
-        List<ProductionRule> kernel = new LinkedList<>();
+    public Set<ProductionRule> getKernelById(int id) {
+        Set<ProductionRule> kernel = new HashSet<>();
 
         for (Map.Entry<ProductionRule, Integer> entry : this.values.entrySet()) {
             if (entry.getValue() == id) {

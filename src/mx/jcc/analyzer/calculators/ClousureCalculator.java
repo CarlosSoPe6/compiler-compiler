@@ -3,6 +3,7 @@ package mx.jcc.analyzer.calculators;
 import mx.jcc.analyzer.ProductionRule;
 import mx.jcc.analyzer.interfaces.IClousreCalculator;
 import mx.jcc.syntax.Variable;
+import mx.jcc.syntax.VariableType;
 
 import java.util.HashSet;
 import java.util.List;
@@ -19,7 +20,18 @@ public class ClousureCalculator implements IClousreCalculator {
             added = false;
             for (int i = 0; i < closure.toArray().length; i++) {
                 ProductionRule entry = (ProductionRule) closure.toArray()[i];
-                int trackPointIndex = entry.body.indexOf(Variable.TRACK_POINT);
+
+                // reference to Variable.TrackPoint gets lost between swaps
+                int trackPointIndex = -1;
+
+                for (int j = 0; j < entry.body.size(); j ++) {
+                    if (entry.body.get(j).isTrackPoint()) {
+                        trackPointIndex = j;
+                        break;
+                    }
+                }
+
+                //= entry.body.indexOf(Variable.TRACK_POINT);
                 if (trackPointIndex == entry.body.size() - 1) {
                     continue;
                 }

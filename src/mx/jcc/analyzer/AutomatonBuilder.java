@@ -19,65 +19,96 @@ public class AutomatonBuilder implements IAutomatonBuilder {
         KernelCalculator kernelCalculator = new KernelCalculator();
         ClousureCalculator clousureCalculator = new ClousureCalculator();
         ProductionRule firstRule = grammar.get(Variable.INITIAL).get(0);
-        Queue<Integer> states = new LinkedList<>();
+        Set<Integer> states = new TreeSet<>();
 
 
 
         // First case: Given the initial rule, generate the initial kernel, closure and state
-        states.offer(0);
+        states.add(0);
         kernelCalculator.setKernel(firstRule, 0);
-        Set<ProductionRule> kernel = new HashSet<>();
-        kernel.add(firstRule);
-        System.out.println("calculator> " + kernelCalculator.compute(firstRule));
-        Set<ProductionRule> closure = clousureCalculator.compute(kernel, grammar);
 
-        Map<String, Integer> knownVariables = new HashMap<>();
-        Map<Variable, Action> initialState = new TreeMap<>();
-        int stateIndex = 1;
-        for (ProductionRule rule : closure) {
-            Variable first = rule.body.get(1);
 
-            if (first.isNonTerminal()) {
-
-                if (!knownVariables.containsKey(first.value)) {
-                    initialState.put(first, new Action(ActionType.GOTO, String.valueOf(stateIndex)));
-                    knownVariables.put(first.value, stateIndex);
-                    kernelCalculator.setKernel(nextVar(rule), stateIndex);
-                    stateIndex ++;
-                } else {
-                    System.out.println("Goto; " + knownVariables.get(first.value));
-                    kernelCalculator.setKernel(nextVar(rule), knownVariables.get(first.value));
-                }
-
-            } else if (first.isTerminal()) {
-
-                if (!initialState.containsKey(first)) {
-                    initialState.put(first, new Action(ActionType.SHIFT, String.valueOf(stateIndex)));
-                    kernelCalculator.setKernel(nextVar(rule), stateIndex);
-                    stateIndex ++;
-                } else {
-                    System.out.println(Integer.parseInt("shift; " + initialState.get(first).value));
-                    kernelCalculator.setKernel(nextVar(rule), Integer.parseInt(initialState.get(first).value));
-                }
-
+        for (int i = 0; i < states.size(); i ++ ){
+            if (i != 0) {
+                states.add(i);
             }
+
+            Set<ProductionRule> kernel = kernelCalculator.getKernelById(i);
+            Set<ProductionRule> closure = clousureCalculator.compute(kernel, grammar);
+
+            Map<String, Integer> knownVariables = new HashMap<>();
+            Map<Variable, Action> currentStateMap = new TreeMap<>();
+            for (ProductionRule rule : closure) {
+                int trackPointIndex = -1;
+
+                for (int j = 0; j < rule.body.size(); j ++) {
+                    if (rule.body.get(j).isTrackPoint()) {
+                        trackPointIndex = j;
+                        break;
+                    }
+                }
+
+                if (trackPointIndex == rule.body.size() - 1) {
+                    continue;
+                }
+
+                Variable currentVariable = rule.body.get(trackPointIndex + 1);
+
+                if (currentVariable.isNonTerminal()) {
+
+                    if (!knownVariables.containsKey(currentVariable.value)) {
+                        int nextStateIndex = kernelCalculator.compute(nextVar(rule));
+
+                        states.add(nextStateIndex);
+
+                        currentStateMap.put(currentVariable, new Action(ActionType.GOTO, String.valueOf(nextStateIndex)));
+                        knownVariables.put(currentVariable.value, nextStateIndex);
+
+                    } else {
+                        kernelCalculator.setKernel(nextVar(rule), knownVariables.get(currentVariable.value));
+                    }
+                } else if (currentVariable.isTerminal()) {
+                    if (!knownVariables.containsKey(currentVariable.value)) {
+                        int nextStateIndex = kernelCalculator.compute(nextVar(rule));
+
+                        states.add(nextStateIndex);
+
+                        currentStateMap.put(currentVariable, new Action(ActionType.SHIFT, String.valueOf(nextStateIndex)));
+                        knownVariables.put(currentVariable.value, nextStateIndex);
+
+                    } else {
+                        kernelCalculator.setKernel(nextVar(rule), knownVariables.get(currentVariable.value));
+                    }
+                }
+            }
+            automaton.add(currentStateMap);
         }
-        automaton.add(initialState);
 
-        System.out.println("Kernel Values: " + kernelCalculator.values);
-        System.out.println("This is the first state " + initialState);
-        System.out.println("This is closure> " + closure);
+        for (var element : automaton) {
 
-        return null;
+            System.out.println(element);
+
+        }
+
+        return automaton;
     }
 
     public ProductionRule nextVar(ProductionRule rule) {
-        int indexOfTrackPoint = rule.body.indexOf(Variable.TRACK_POINT);
+        int trackPointIndex = -1;
 
-        if (indexOfTrackPoint == rule.body.size() - 1) {
+        for (int j = 0; j < rule.body.size(); j ++) {
+            if (rule.body.get(j).isTrackPoint()) {
+                trackPointIndex = j;
+                break;
+            }
+        }
+
+        if (trackPointIndex == rule.body.size() - 1) {
             return null;
         }
-        Collections.swap(rule.body, indexOfTrackPoint, indexOfTrackPoint + 1);
+
+        Collections.swap(rule.body, trackPointIndex, trackPointIndex + 1);
+
 
         return rule;
     }
