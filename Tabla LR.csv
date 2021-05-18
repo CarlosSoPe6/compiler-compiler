@@ -1,0 +1,13 @@
+ ,id, mas, pa, pc, por, E, F, T
+0, Action {type=SHIFT  state='2'} , , Action {type=SHIFT  state='5'} , , , Action {type=GOTO  state='4'} , Action {type=GOTO  state='3'} , Action {type=GOTO  state='1'} 
+1, , , , , Action {type=SHIFT  state='6'} , 
+2, , , , , , 
+3, , , , , , 
+4, , Action {type=SHIFT  state='7'} , , , , 
+5, , , , , , Action {type=GOTO  state='9'} , Action {type=GOTO  state='10'} , Action {type=GOTO  state='8'} 
+6, , , , , , 
+7, , , , , , 
+8, , , , , , 
+9, , , , Action {type=SHIFT  state='11'} , , 
+10, , , , , , 
+11, , , , , , 
